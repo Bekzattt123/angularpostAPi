@@ -15,11 +15,10 @@ import {NgForOf, NgIf} from '@angular/common';
 export class PostListComponent implements OnInit {
   posts: Post[] = [];
   newPost: Post = { title: '', body: '' };
-  editingPost: Post | null = null;
-
-  // Intermediate variables for editingPost.title and editingPost.body
-  editingTitleProxy: string = '';
-  editingBodyProxy: string = '';
+  searchQuery: string = ''; // For search functionality
+  editingPost: Post | null = null; // Tracks the post being edited
+  editingTitleProxy: string = ''; // Proxy for editingPost.title
+  editingBodyProxy: string = ''; // Proxy for editingPost.body
 
   constructor(private postService: PostService) {}
 
@@ -41,8 +40,10 @@ export class PostListComponent implements OnInit {
     if (this.newPost.title.trim() && this.newPost.body.trim()) {
       this.postService.createPost(this.newPost).subscribe((post) => {
         this.posts.push(post);
-        this.newPost = { title: '', body: '' };
+        this.newPost = { title: '', body: '' }; // Reset form
       });
+    } else {
+      alert('Заполните заголовок и текст!');
     }
   }
 
@@ -54,17 +55,24 @@ export class PostListComponent implements OnInit {
 
   updatePost(): void {
     if (this.editingPost) {
-      this.editingPost.title = this.editingTitleProxy; // Sync proxy with editingPost
+      // Синхронизируем proxy-переменные с editingPost
+      this.editingPost.title = this.editingTitleProxy;
       this.editingPost.body = this.editingBodyProxy;
 
+      // Проверяем, что поля title и body не пустые
       if (this.editingPost.title.trim() && this.editingPost.body.trim()) {
         this.postService.updatePost(this.editingPost).subscribe(() => {
+          // Находим индекс обновляемого поста в массиве posts
           const index = this.posts.findIndex((p) => p.id === this.editingPost?.id);
           if (index !== -1) {
-            this.posts[index] = this.editingPost!;
+            // Обновляем пост в массиве
+            this.posts[index] = {body: '', title: '', ...this.editingPost };
           }
-          this.editingPost = null; // Reset editingPost after saving
+          // Сбрасываем состояние редактирования
+          this.editingPost = null;
         });
+      } else {
+        alert('Заполните заголовок и текст!');
       }
     }
   }
@@ -73,5 +81,17 @@ export class PostListComponent implements OnInit {
     this.postService.deletePost(id).subscribe(() => {
       this.posts = this.posts.filter((post) => post.id !== id);
     });
+  }
+
+  // Getter for filtered posts (search functionality)
+  get filteredPosts(): Post[] {
+    if (!this.searchQuery) {
+      return this.posts; // Return all posts if search query is empty
+    }
+    const query = this.searchQuery.toLowerCase();
+    return this.posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(query) || post.body.toLowerCase().includes(query)
+    );
   }
 }

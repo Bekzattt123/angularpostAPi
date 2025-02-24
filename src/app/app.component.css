@@ -98,3 +98,10 @@ button.cancel:hover {
   color: #666666;
   margin-bottom: 10px;
 }
+input.form-control {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}

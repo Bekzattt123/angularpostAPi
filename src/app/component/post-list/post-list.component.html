@@ -1,40 +1,51 @@
-<div class="container">
+<div class="container mt-5">
   <h2>Список постов</h2>
 
+  <!-- Поле поиска -->
+  <div class="mb-4">
+    <input
+      [(ngModel)]="searchQuery"
+      placeholder="Поиск постов..."
+      class="form-control"
+    />
+  </div>
+
   <!-- Форма для добавления нового поста -->
-  <div class="mb-6">
+  <div class="mb-4">
     <input
       [(ngModel)]="newPost.title"
       placeholder="Заголовок"
+      class="form-control mb-3"
     />
     <textarea
       [(ngModel)]="newPost.body"
       placeholder="Текст"
+      class="form-control mb-3"
     ></textarea>
     <button
       (click)="addPost()"
-      class="add"
+      class="btn btn-primary w-100"
     >
       Добавить
     </button>
   </div>
 
   <!-- Список постов -->
-  <ul>
-    <li *ngFor="let post of posts" class="post-item">
+  <ul class="list-group">
+    <li *ngFor="let post of filteredPosts" class="list-group-item mb-3">
       <div *ngIf="editingPost?.id !== post.id">
-        <h3>{{ post?.title || 'No Title' }}</h3>
-        <p>{{ post?.body || 'No Content' }}</p>
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.body }}</p>
         <div>
           <button
             (click)="editPost(post)"
-            class="edit"
+            class="btn btn-warning me-2"
           >
             Редактировать
           </button>
           <button
             (click)="deletePost(post.id!)"
-            class="delete"
+            class="btn btn-danger"
           >
             Удалить
           </button>
@@ -46,21 +57,23 @@
         <input
           [(ngModel)]="editingTitleProxy"
           placeholder="Заголовок"
+          class="form-control mb-3"
         />
         <textarea
           [(ngModel)]="editingBodyProxy"
           placeholder="Текст"
+          class="form-control mb-3"
         ></textarea>
         <div>
           <button
             (click)="updatePost()"
-            class="save"
+            class="btn btn-success me-2"
           >
             Сохранить
           </button>
           <button
             (click)="editingPost = null"
-            class="cancel"
+            class="btn btn-secondary"
           >
             Отмена
           </button>
