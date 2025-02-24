@@ -1,0 +1,71 @@
+<div class="container">
+  <h2>Список постов</h2>
+
+  <!-- Форма для добавления нового поста -->
+  <div class="mb-6">
+    <input
+      [(ngModel)]="newPost.title"
+      placeholder="Заголовок"
+    />
+    <textarea
+      [(ngModel)]="newPost.body"
+      placeholder="Текст"
+    ></textarea>
+    <button
+      (click)="addPost()"
+      class="add"
+    >
+      Добавить
+    </button>
+  </div>
+
+  <!-- Список постов -->
+  <ul>
+    <li *ngFor="let post of posts" class="post-item">
+      <div *ngIf="editingPost?.id !== post.id">
+        <h3>{{ post?.title || 'No Title' }}</h3>
+        <p>{{ post?.body || 'No Content' }}</p>
+        <div>
+          <button
+            (click)="editPost(post)"
+            class="edit"
+          >
+            Редактировать
+          </button>
+          <button
+            (click)="deletePost(post.id!)"
+            class="delete"
+          >
+            Удалить
+          </button>
+        </div>
+      </div>
+
+      <!-- Форма для редактирования -->
+      <div *ngIf="editingPost?.id === post.id">
+        <input
+          [(ngModel)]="editingTitleProxy"
+          placeholder="Заголовок"
+        />
+        <textarea
+          [(ngModel)]="editingBodyProxy"
+          placeholder="Текст"
+        ></textarea>
+        <div>
+          <button
+            (click)="updatePost()"
+            class="save"
+          >
+            Сохранить
+          </button>
+          <button
+            (click)="editingPost = null"
+            class="cancel"
+          >
+            Отмена
+          </button>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
